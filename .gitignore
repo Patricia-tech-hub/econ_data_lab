@@ -1,0 +1,59 @@
+# Python environments
+venv/
+.venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Conda
+.conda/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# Data (raw - users download themselves)
+data/raw/*
+!data/raw/.gitkeep
+!data/raw/README.md
+
+# Processed data (small files kept for teammate convenience)
+data/processed/*
+!data/processed/master_panel.csv
+!data/processed/ntl_calibrated_panel.csv
+!data/processed/city_pop_panel.csv
+
+# Keep results readable, but exclude temp/scratch files
+outputs/**/.DS_Store
+outputs/**/*.tmp
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Credentials & secrets
+.env
+*.pem
+earthengine-credentials/
+.config/earthengine/
+
+# Claude Code local state
+.claude/

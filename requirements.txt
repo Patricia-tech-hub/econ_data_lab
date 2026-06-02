@@ -1,0 +1,23 @@
+# Python dependencies for Gulf NBS analysis
+# Tested with Python 3.11
+# For Windows users: pywin32 will install automatically
+#
+# Recommended install path is conda (see environment.yml).
+# This file is the pip-only fallback.
+
+pandas
+numpy
+scipy
+matplotlib
+seaborn
+statsmodels
+scikit-learn
+openpyxl
+requests
+tqdm
+jupyterlab
+ipykernel
+earthengine-api
+beautifulsoup4
+lxml
+linearmodels

@@ -1,0 +1,74 @@
+NTL DMSP-VIIRS Calibration Diagnostics
+==================================================
+
+Method: Elvidge-style single-year OLS calibration
+Calibration year: 2013
+N observations: 20
+
+OLS: VIIRS_city = a + b x DMSP_city
+  a (intercept): -34.976618
+  b (slope):     1.508471
+  R²:            0.6043
+  p-value (b):   5.4993e-05
+  SE (slope):    0.287692
+
+Calibration pairs (city, DMSP_2013, VIIRS_2013, fitted):
+  Abu Dhabi             DMSP= 35.18  VIIRS= 22.91  fitted= 18.10  resid=+4.81
+  Ajman                 DMSP= 44.07  VIIRS= 24.00  fitted= 31.50  resid=-7.50
+  Al Ain                DMSP= 50.59  VIIRS= 20.25  fitted= 41.34  resid=-21.09
+  Al Mubarraz           DMSP= 44.14  VIIRS= 19.94  fitted= 31.61  resid=-11.66
+  Buraydah              DMSP= 50.86  VIIRS= 25.77  fitted= 41.75  resid=-15.98
+  Dammam                DMSP= 52.47  VIIRS= 43.49  fitted= 44.17  resid=-0.68
+  Doha                  DMSP= 49.64  VIIRS= 45.19  fitted= 39.91  resid=+5.28
+  Dubai                 DMSP= 49.35  VIIRS= 33.17  fitted= 39.47  resid=-6.30
+  Jeddah                DMSP= 50.26  VIIRS= 37.83  fitted= 40.84  resid=-3.01
+  Khobar                DMSP= 42.73  VIIRS= 29.24  fitted= 29.49  resid=-0.25
+  Kuwait City           DMSP= 39.10  VIIRS= 34.58  fitted= 24.00  resid=+10.59
+  Manama                DMSP= 39.59  VIIRS= 29.08  fitted= 24.74  resid=+4.34
+  Mecca                 DMSP= 49.91  VIIRS= 34.67  fitted= 40.31  resid=-5.65
+  Medina                DMSP= 42.42  VIIRS= 27.70  fitted= 29.01  resid=-1.31
+  Muscat                DMSP= 22.49  VIIRS=  8.40  fitted= -1.05  resid=+9.45
+  Ras Al Khaimah        DMSP= 30.06  VIIRS=  7.28  fitted= 10.36  resid=-3.08
+  Riyadh                DMSP= 62.87  VIIRS=100.68  fitted= 59.86  resid=+40.82
+  Sharjah               DMSP= 47.55  VIIRS= 32.42  fitted= 36.75  resid=-4.33
+  Sohar                 DMSP= 21.09  VIIRS=  5.49  fitted= -3.17  resid=+8.66
+  Taif                  DMSP= 35.14  VIIRS= 14.91  fitted= 18.03  resid=-3.12
+
+Calibration applied to: DMSP 2000-2012 (formula: ntl_calibrated = a + b * ntl_dmsp_raw)
+VIIRS 2013-2023: passed through unchanged (ntl_calibrated = ntl_raw)
+
+POST-CALIBRATION CORRECTIONS:
+  - 32 negative calibrated values floored to 0 (Muscat 2000-2012, Sohar 2000-2012,
+    Ras Al Khaimah 2000-2005). Artifact of large negative intercept on dim cities.
+
+SEAM ANALYSIS (2012 calibrated DMSP -> 2013 raw VIIRS):
+  Clean seam (<10% jump): Medina +0.6%, Khobar -0.7%, Dammam -2.2%, Jeddah -6.2%,
+                           Mecca -6.2%, Taif -7.8%, Abu Dhabi +9.6%
+  Moderate jump (10-50%): Doha +14%, Manama +14%, Kuwait City +33%, Dubai -19%,
+                           Sharjah -16%, Ajman -28%, Ras Al Khaimah -36%,
+                           Buraydah -37%, Al Mubarraz -38%, Al Ain -48%
+  Severe:
+    Riyadh +68% -- DMSP saturated (raw DN=62.9 ~= ceiling 63); VIIRS correctly
+                   captures true brightness (100.7 in 2013, growing to 130+ by 2023).
+                   Calibration UNDERESTIMATES Riyadh NTL in 2000-2012.
+    Muscat/Sohar  -- floored to 0 from DMSP era; VIIRS 2013 = 8.4/5.5.
+                   Pct jump is an artifact of floor, not real discontinuity.
+
+RECOMMENDATIONS FOR REGRESSION USE:
+  1. Apply log(1 + ntl_calibrated) transformation to compress the Riyadh outlier.
+  2. Include a binary sensor_VIIRS dummy (0=DMSP_calibrated, 1=VIIRS) to control for
+     remaining level shifts across the seam.
+  3. Prefer log-differenced NTL (annual growth rates) over levels where possible --
+     first-differencing eliminates the seam discontinuity entirely.
+  4. Run robustness checks on VIIRS-only subsample (2013-2023) for key NTL results.
+  5. Treat Riyadh as a potential outlier in all NTL-based specifications.
+
+LIMITATIONS:
+  - Single-year calibration on n=20 cities (small sample).
+  - DMSP and VIIRS have different spectral sensitivities and saturation thresholds.
+  - DMSP saturates at DN=63 in urban cores; VIIRS has no saturation.
+  - Calibration assumes linear relationship is stable across all DN ranges.
+  - Al Ain, Al Mubarraz, Buraydah show DMSP bloom effect (overestimation due to
+    spillover from nearby bright sources); calibrated DMSP > raw VIIRS by 38-48%.
+
+R² = 0.604 >= 0.5: calibration accepted with caveats above.

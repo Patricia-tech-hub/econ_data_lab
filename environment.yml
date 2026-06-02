@@ -1,0 +1,36 @@
+name: gulf_nbs
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.11
+  - r-base=4.4.2
+  - r-boot
+  - r-fixest
+  - r-ggplot2
+  - r-haven
+  - r-irkernel
+  - r-lmtest
+  - r-patchwork
+  - r-plm
+  - r-readxl
+  - r-sandwich
+  - r-tidyverse
+  - ipykernel
+  - jupyterlab
+  - matplotlib
+  - numpy
+  - openpyxl
+  - pandas
+  - requests
+  - scikit-learn
+  - scipy
+  - seaborn
+  - statsmodels
+  - tqdm
+  - pip:
+    - earthengine-api
+    - beautifulsoup4
+    - lxml
+    - linearmodels
+    - rpy2
