@@ -143,18 +143,10 @@ conda env create -f environment.yml && conda activate gulf_nbs
 
 **Inference strategy.** Standard errors are clustered at the city level (G=20 clusters) to account for within-city serial correlation. Robustness checks include wild cluster bootstrap (B=9999, Rademacher weights), leave-one-country-out jackknife, 1-year and 2-year lagged NDVI specifications, VIIRS-only subsample (2013–2023), and an environmental-expenditure subsample. Results are in `outputs/tables/robustness_*.docx`.
 
-**Known limitations.** With only 20 city clusters across 6 countries the asymptotic justification for cluster-robust SEs is weak, and jackknife diagnostics reveal fragility to individual city exclusions. Economic outcomes are measured at the country level (WDI) and assigned to all cities in a country, creating a scale mismatch with the city-level NDVI. These limitations are discussed in the project presentation in `outputs/`.
-
----
-
-## License
-
-Code in this repository is released under the [MIT License](https://opensource.org/licenses/MIT).
-
-Data downloaded from third-party sources retains its original license.
+**Known limitations.** With only 20 city clusters across 6 countries the asymptotic justification for cluster-robust SEs is weak, and jackknife diagnostics reveal fragility to individual city exclusions. Economic outcomes are measured at the country level (WDI) and assigned to all cities in a country, creating a scale mismatch with the city-level NDVI. These limitations are acknowledged and may be addressed in future extensions of this work.
 
 ---
 
 ## Acknowledgements
 
-This project was developed as part of the Econ Data Lab programme in partnership with UNDP.
+This project was developed as part of the Econ Data Lab programme.
