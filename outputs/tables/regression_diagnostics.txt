@@ -1,0 +1,218 @@
+====================================================================
+GULF NBS PANEL STUDY -- REGRESSION DIAGNOSTICS SUMMARY
+Two-way FE (city + year), cluster-robust SE by city
+Panel: 20 cities, 2000-2023
+====================================================================
+Generated from: scripts/05_regressions.R
+====================================================================
+
+
+--------------------------------------------------------------------
+[1] PANEL SETUP
+--------------------------------------------------------------------
+  N cities     : 20
+  N years      : 24  (2000-2023)
+  N obs        : 480  (balanced: YES)
+
+  Obs by country:
+    ARE : 144  (8 cities)
+    SAU : 216  (9 cities)
+    OMN :  48  (2 cities)
+    BHR :  24  (1 city)
+    KWT :  24  (1 city)
+    QAT :  24  (1 city)
+
+  Variable completeness:
+    ndvi                   480/480  (100.0%)
+    ntl_log                480/480  (100.0%)
+    log_elec_pc            480/480  (100.0%)
+    log_gdp_pc             480/480  (100.0%)
+    log_city_pop_th        480/480  (100.0%)
+    industry_va            453/480  ( 94.4%)
+    fdi_pct                480/480  (100.0%)
+    env_exp_pct_gdp        110/480  ( 22.9%)
+    sensor_VIIRS           480/480  (100.0%)
+
+  Note: sensor_VIIRS dropped from all models due to collinearity
+        with year fixed effects.
+
+
+--------------------------------------------------------------------
+[2] MAIN MODEL RESULTS
+--------------------------------------------------------------------
+  Specification:
+    (a) bivariate:   outcome ~ ndvi | city FE + year FE
+    (b) controlled:  outcome ~ ndvi + log(gdp_pc) + log(city_pop_th)
+                              | city FE + year FE
+  SE clustered by city (G=20). Wild bootstrap: B=9999, Rademacher.
+
+  Model  Outcome           beta      Clust-SE   Clust-p   WB-p    Within-R2   N
+  -------------------------------------------------------------------------------
+  M1a    log(elec/cap)   -0.3016      2.0351    0.884    0.885    0.0004     480
+  M1b    log(elec/cap)   +1.7881      1.8739    0.352    0.418    0.2111     480
+  M2a    ntl_log         +7.9695      6.3859    0.227    0.271    0.0172     480
+  M2b    ntl_log         +5.1118      5.2777    0.345    0.399    0.1495     480
+  M3a    industry_va    +60.2905     26.7439    0.036*   0.048*   0.0398     453
+  M3b    industry_va    +46.8132     32.1174    0.161    0.187    0.0505     453
+  M4a    fdi_pct         -9.1788      8.4260    0.290    0.263    0.0012     480
+  M4b    fdi_pct        -12.8751      9.3410    0.184    0.194    0.0409     480
+
+  * p < 0.05  (cluster SE).  Only M3a crosses the 5% threshold.
+
+  Predicted directions: elec (down), ntl/industry/FDI (up).
+  Only M3a matches direction AND is significant.
+
+
+--------------------------------------------------------------------
+[3] JACKKNIFE -- LEAVE-ONE-COUNTRY-OUT
+--------------------------------------------------------------------
+  Full-sample coefficients and sensitivity to country exclusion.
+
+  Model   Full coef   JK range                 Max delta%   Most influential country
+  -----------------------------------------------------------------------------------
+  M1a     -0.3016     [-3.1852, +5.8081]       2026%  ***   Saudi Arabia (+2025.8%)
+  M1b     +1.7881     [-0.6105, +5.9059]        230%  ***   Saudi Arabia (+ 230.3%)
+  M2a     +7.9695     [-0.2744, +16.7640]        110%  ***   UAE          (+ 110.4%)
+  M2b     +5.1118     [-2.0586, +13.7380]        169%  ***   UAE          (+ 168.8%)
+  M3a    +60.2905     [+35.2909, +94.8513]        57%  ***   UAE          (+  57.3%)
+  M3b    +46.8132     [+15.7401, +76.1568]        66%  ***   Saudi Arabia (+  66.4%)
+  M4a     -9.1788     [-19.0839, -1.4065]        108%  ***   Oman         (+ 107.9%)
+  M4b    -12.8751     [-20.2744, -7.0661]         57%  ***   Oman         (+  57.5%)
+
+  All 8 models flagged: jackknife max delta > 50%.
+  M3a is the most stable (57%), but still exceeds threshold.
+  M1a is driven almost entirely by Saudi Arabia (2026% change).
+
+
+--------------------------------------------------------------------
+[4] VIIRS-ONLY SUBSAMPLE (2013-2023)
+--------------------------------------------------------------------
+  N obs: 220  (20 cities x 11 years)
+  Tests whether results depend on DMSP-VIIRS splice for NTL variable.
+
+  Model   Full coef   VIIRS coef   VIIRS p   Sign flip?
+  -------------------------------------------------------
+  M1a      -0.3016      +0.1800     0.622   *** SIGN FLIP ***
+  M1b      +1.7881      +0.1672     0.625   No
+  M2a      +7.9695      +0.5291     0.738   No
+  M2b      +5.1118      +0.6413     0.574   No
+  M3a     +60.2905     +20.8081     0.229   No
+  M3b     +46.8132     +21.1673     0.234   No
+  M4a      -9.1788     -24.4376     0.215   No
+  M4b     -12.8751     -23.9402     0.190   No
+
+  All VIIRS-only coefficients are insignificant (p > 0.20).
+  M1a sign flip flagged.  All jackknife flags persist -> all FAIL.
+
+
+--------------------------------------------------------------------
+[5] LAGGED NDVI (L1 and L2)
+--------------------------------------------------------------------
+  Tests whether NDVI effects on outcomes operate with a delay.
+  Bivariate spec only (comparable to M_a models).
+
+  Lag        Outcome           coef       SE       p-val    N
+  -------------------------------------------------------------
+  L0 (main)  log(elec/cap)   -0.1859   2.0351    0.884    480
+  L1 (1-yr)  log(elec/cap)   -0.1859   2.4485    0.940    460
+  L2 (2-yr)  log(elec/cap)   -0.6968   2.3147    0.767    440
+
+  L0 (main)  ntl_log         +7.9695   6.3859    0.227    480
+  L1 (1-yr)  ntl_log         +9.9096   7.9684    0.229    460
+  L2 (2-yr)  ntl_log         +6.6283   7.5601    0.392    440
+
+  L0 (main)  industry_va    +60.2905  26.7439    0.036*   453
+  L1 (1-yr)  industry_va    +78.3835  31.0977    0.021*   436
+  L2 (2-yr)  industry_va    +97.1610  35.7012    0.014*   419
+
+  L0 (main)  fdi_pct         -9.1788   8.4260    0.290    480
+  L1 (1-yr)  fdi_pct         -5.2340  24.1045    0.830    460
+  L2 (2-yr)  fdi_pct        -21.0844  19.5609    0.295    440
+
+  Key finding: industry_va NDVI effect strengthens monotonically
+               with lag (L0: +60.3, L1: +78.4, L2: +97.2; all p<0.05).
+               No other outcome shows significant lagged effects.
+
+
+--------------------------------------------------------------------
+[6] ENV EXPENDITURE SUBSAMPLE
+--------------------------------------------------------------------
+  N obs: 110 | Countries: ARE, QAT, KWT, BHR, OMN  (SAU absent)
+  Adds env_exp_pct_gdp as additional control to bivariate spec.
+
+  Model   Full coef   Env coef    Env p    N env
+  ------------------------------------------------
+  M1a      -0.3016     +6.8950    0.198    109
+  M2a      +7.9695     -5.1268    0.045*   109
+  M3a     +60.2905    -52.0883    0.216     90
+  M4a      -9.1788    +42.5262    0.159    109
+
+  M2a (NTL) sign flip when env expenditure included (p=0.045).
+  Subsample likely insufficient (N=110, no SAU) for reliable inference.
+
+
+--------------------------------------------------------------------
+[7] FULL FDI DIAGNOSTICS (M4a and M4b)
+--------------------------------------------------------------------
+  Outcome: fdi_pct (net inflows, % of GDP)
+
+  --- M4a : fdi_pct ~ ndvi | city FE + year FE ---
+    N obs              : 480  (G=20 city clusters)
+    NDVI coef          : -9.1788
+    Cluster SE         : 8.4260
+    Cluster p          : 0.290
+    Wild boot p (9999) : 0.263
+    Within R^2         : 0.001
+    Jackknife max %    : 107.9%  *** FLAG: >50% ***
+    VIIRS-only coef    : -24.4376  (sign flip: No, p=0.215)
+    Lagged NDVI L1     : -5.2340   (p=0.830)
+    Lagged NDVI L2     : -21.0844  (p=0.295)
+
+  --- M4b : fdi_pct ~ ndvi + log(gdp_pc) + log(city_pop_th) | city FE + year FE ---
+    N obs              : 480  (G=20 city clusters)
+    NDVI coef          : -12.8751
+    Cluster SE         : 9.3410
+    Cluster p          : 0.184
+    Wild boot p (9999) : 0.194
+    Within R^2         : 0.041
+    Jackknife max %    : 57.5%   *** FLAG: >50% ***
+    VIIRS-only coef    : -23.9402  (sign flip: No, p=0.190)
+    Lagged NDVI L1     : -5.2340   (p=0.830)
+    Lagged NDVI L2     : -21.0844  (p=0.295)
+
+
+--------------------------------------------------------------------
+[8] FINAL ROBUSTNESS SUMMARY -- ALL 8 MODELS
+--------------------------------------------------------------------
+  Pass criteria:
+    (1) wild-boot p < 0.10
+    (2) no sign flip in VIIRS-only subsample
+    (3) jackknife max delta < 50%
+
+  Model   Clust-p   WB-p    Sign flip (VIIRS)?  JK > 50%?   STATUS
+  -------------------------------------------------------------------
+  M1a     0.884     0.885   YES ***              YES ***      FAIL
+  M1b     0.352     0.418   No                   YES ***      FAIL
+  M2a     0.227     0.271   No                   YES ***      FAIL
+  M2b     0.345     0.399   No                   YES ***      FAIL
+  M3a     0.036*    0.048*  No                   YES ***      FAIL
+  M3b     0.161     0.187   No                   YES ***      FAIL
+  M4a     0.290     0.263   No                   YES ***      FAIL
+  M4b     0.184     0.194   No                   YES ***      FAIL
+
+  Models surviving ALL robustness checks: NONE
+
+  Interpretation notes:
+  - M3a is the sole statistically significant result (p=0.036 cluster,
+    p=0.048 wild bootstrap). Effect strengthens with lags (L1: p=0.021,
+    L2: p=0.014), consistent with delayed NbS-to-industry pathway.
+  - All models fail jackknife: results are sensitive to single-country
+    exclusion, reflecting small G=20 cluster problem and country
+    heterogeneity (SAU dominates obs count at 216/480).
+  - Jackknife sensitivity does NOT imply the result is wrong, but
+    requires transparent disclosure and country-level robustness
+    discussion in the paper.
+
+====================================================================
+END OF DIAGNOSTICS SUMMARY
+====================================================================
